@@ -72,24 +72,23 @@ def convert_link(update, context):
 # --- 3. HÀM CHÍNH KHỞI ĐỘNG BOT ---
 def main():
     """Khởi chạy bot."""
-    # Khởi tạo Updater với Token bot của Anh Thắng
     updater = Updater(BOT_TOKEN, use_context=True)
-
-    # Lấy dispatcher để đăng ký các hàm xử lý
     dp = updater.dispatcher
-
-    # Đăng ký các hàm xử lý lệnh
     dp.add_handler(CommandHandler("start", start))
-
-    # Đăng ký hàm xử lý tin nhắn thường (nơi chứa link)
-    # Filters.text & ~Filters.command nghĩa là: chỉ xử lý tin nhắn dạng văn bản KHÔNG phải là lệnh
     dp.add_handler(MessageHandler(Filters.text & ~Filters.command, convert_link))
 
-    # Bắt đầu chế độ Long Polling (Bot sẽ tự động hỏi Telegram API liên tục)
-    print("Bot đang chạy... (Long Polling)")
-    updater.start_polling()
+    # Render cần chạy ở chế độ Web Server (Long Polling là không lý tưởng)
+    # Chúng ta sẽ dùng chế độ Web Server đơn giản nhất:
 
-    # Giữ bot chạy cho đến khi nhấn Ctrl-C
+    # updater.start_polling() # Bỏ dòng này
+
+    # Render sẽ chạy ứng dụng web bằng lệnh trong Procfile (web: python bot.py)
+    # và giữ ứng dụng Python chạy.
+
+    print("Bot đang chạy ở chế độ Long Polling đơn giản...")
+    updater.start_polling() # Dù không lý tưởng, chúng ta dùng cách này để giữ bot chạy
+
+    # Thêm 2 dòng này để bot không bị tắt ngay:
     updater.idle()
 
 if __name__ == '__main__':
